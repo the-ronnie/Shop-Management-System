@@ -15,6 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/" className="hover:underline">Home</Link>
             <Link href="/add-product" className="hover:underline">Add Product</Link>
             <Link href="/products" className="hover:underline">Products</Link>
+            <Link href="/transactions" className="hover:underline">Transactions</Link>
           </div>
         </nav>
         <main className="max-w-5xl mx-auto p-4">{children}</main>
