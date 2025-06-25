@@ -18,6 +18,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/transactions" className="hover:underline">Transactions</Link>
             <Link href="/billing" className="hover:underline">Billing</Link>
             <Link href="/credits" className="hover:underline">Credits</Link>
+            <Link href="/low-stock" className="hover:underline flex items-center">
+              <span className="relative">
+                Low Stock
+                <span className="absolute -top-1 -right-5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">!</span>
+              </span>
+            </Link>
           </div>
         </nav>
         <main className="max-w-5xl mx-auto p-4">{children}</main>
