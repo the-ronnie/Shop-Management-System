@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import connect from '../../../lib/mongoose';
 import Credit from '../../../models/Credit';
+import Log from '../../../models/log'; // Import Log model
 import mongoose from 'mongoose';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -27,6 +28,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json(credits);
     } catch (error) {
       console.error('Error fetching credits:', error);
+      
+      // Log the error
+      try {
+        await Log.create({
+          type: 'error',
+          description: `Failed to fetch credits: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          timestamp: new Date()
+        });
+      } catch (logError) {
+        console.error('Failed to log error:', logError);
+      }
+      
       return res.status(500).json({ error: 'Failed to fetch credits' });
     }
   }
@@ -67,9 +80,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const credit = await Credit.create(creditData);
       console.log('Credit created with ID:', credit._id);
       
+      // Log the credit creation
+      await Log.create({
+        type: 'credit',
+        description: `${creditData.type === 'given' ? 'Gave' : 'Took'} credit of ₹${creditData.totalAmount} ${creditData.type === 'given' ? 'to' : 'from'} ${creditData.name}`,
+        timestamp: new Date(),
+        relatedItemId: credit._id.toString(),
+        relatedItemName: credit.name,
+        relatedItemType: 'credit'
+      });
+      
       return res.status(201).json(credit);
     } catch (error: any) {
       console.error('Create credit error:', error);
+      
+      // Log the error
+      try {
+        await Log.create({
+          type: 'error',
+          description: `Failed to create credit: ${error.message}`,
+          timestamp: new Date()
+        });
+      } catch (logError) {
+        console.error('Failed to log error:', logError);
+      }
       
       if (error.name === 'ValidationError') {
         return res.status(400).json({ 

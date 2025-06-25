@@ -24,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <span className="absolute -top-1 -right-5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">!</span>
               </span>
             </Link>
+            <Link href="/logs" className="hover:underline">Activity Logs</Link>
           </div>
         </nav>
         <main className="max-w-5xl mx-auto p-4">{children}</main>

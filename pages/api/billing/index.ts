@@ -1,5 +1,6 @@
 import connect from "../../../lib/mongoose";
 import BillModel from "../../../models/bill";
+import Log from "../../../models/log"; // Import Log model
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -27,9 +28,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         total: data.total,
       });
 
+      // Log the successful bill creation
+      await Log.create({
+        type: 'bill',
+        description: `Created bill of ₹${bill.total} for customer ${bill.customerName} with ${bill.items.length} items`,
+        timestamp: new Date(),
+        relatedItemId: bill._id.toString(),
+        relatedItemName: bill.customerName,
+        relatedItemType: 'bill'
+      });
+
       return res.status(201).json(bill);
     } catch (error) {
       console.error("Error creating bill:", error);
+      
+      // Log the error
+      try {
+        await Log.create({
+          type: 'error',
+          description: `Failed to create bill: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          timestamp: new Date()
+        });
+      } catch (logError) {
+        console.error("Failed to log error:", logError);
+      }
+      
       return res.status(500).json({ message: "Failed to create bill" });
     }
   }
@@ -41,6 +64,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json(bills);
     } catch (error) {
       console.error("Error fetching bills:", error);
+      
+      // Log the error (optional for GET requests)
+      try {
+        await Log.create({
+          type: 'error',
+          description: `Failed to fetch bills: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          timestamp: new Date()
+        });
+      } catch (logError) {
+        console.error("Failed to log error:", logError);
+      }
+      
       return res.status(500).json({ message: "Failed to fetch bills" });
     }
   }
