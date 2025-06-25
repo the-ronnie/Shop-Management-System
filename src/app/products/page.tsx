@@ -344,6 +344,10 @@ export default function ProductsPage() {
                     src={selected.image}
                     alt={selected.name}
                     className="w-full h-auto object-contain rounded"
+                        onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/placeholder-product.png';
+                                console.log(`Failed to load detail image for product: ${selected.name}`);
+                        }}
                   />
                 ) : (
                   <div className="w-full aspect-square bg-gray-100 rounded flex items-center justify-center text-gray-400 text-5xl">

@@ -8,6 +8,7 @@ interface Product {
   name: string;
   price: number;
   quantity: number; // available stock
+  image?: string;  // Add image property to Product interface
 }
 
 interface BillItem {
@@ -554,7 +555,7 @@ export default function BillingPage() {
                     />
                   </div>
 
-                  {/* Product dropdown */}
+                  {/* Product dropdown with image handling */}
                   {showProductDropdown && searchTerm && (
                     <div className="absolute z-10 w-full mt-1 bg-white shadow-lg max-h-60 rounded-md overflow-auto">
                       {filteredProducts.length > 0 ? (
@@ -568,14 +569,32 @@ export default function BillingPage() {
                               setShowProductDropdown(false);
                             }}
                           >
-                            <div className="font-medium">{product.name}</div>
-                            <div className="text-sm text-gray-500 flex justify-between">
-                              <span>₹{product.price}</span>
-                              <span>
-                                {product.quantity > 0
-                                  ? `${product.quantity} in stock`
-                                  : "Out of stock"}
-                              </span>
+                            <div className="flex items-center gap-2">
+                              {product.image ? (
+                                <img
+                                  src={product.image}
+                                  alt={product.name}
+                                  className="w-8 h-8 object-cover rounded"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = '/placeholder-product.png';
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center text-gray-500 text-xs">
+                                  📦
+                                </div>
+                              )}
+                              <div>
+                                <div className="font-medium">{product.name}</div>
+                                <div className="text-sm text-gray-500 flex justify-between">
+                                  <span>₹{product.price}</span>
+                                  <span>
+                                    {product.quantity > 0
+                                      ? `${product.quantity} in stock`
+                                      : "Out of stock"}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         ))
@@ -647,7 +666,25 @@ export default function BillingPage() {
                     {selectedItems.map((item, index) => (
                       <tr key={index} className="border-b">
                         <td className="p-2">{index + 1}</td>
-                        <td className="p-2">{item.product.name}</td>
+                        <td className="p-2">
+                          <div className="flex items-center gap-2">
+                            {item.product.image ? (
+                              <img
+                                src={item.product.image}
+                                alt={item.product.name}
+                                className="w-8 h-8 object-cover rounded"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = '/placeholder-product.png';
+                                }}
+                              />
+                            ) : (
+                              <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center text-gray-500 text-xs">
+                                📦
+                              </div>
+                            )}
+                            {item.product.name}
+                          </div>
+                        </td>
                         <td className="p-2">₹{item.product.price}</td>
                         <td className="p-2">
                           <div className="flex items-center">

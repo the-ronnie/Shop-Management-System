@@ -4,11 +4,22 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
+// Configuration for formidable - don't use Next.js body parser
 export const config = {
   api: {
     bodyParser: false,
   },
 };
+
+// Helper function to convert relative paths to absolute URLs
+function getAbsoluteUrl(relativePath: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  
+  // Ensure the path starts with a slash
+  const normalizedPath = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+  
+  return `${baseUrl}${normalizedPath}`;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -56,7 +67,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
               try {
                 fs.renameSync((file as formidable.File).filepath, newPath);
-                uploadedFiles.push(`/uploads/${uniqueFilename}`);
+                // Store as absolute URL instead of relative path
+                uploadedFiles.push(getAbsoluteUrl(`/uploads/${uniqueFilename}`));
               } catch (error) {
                 console.error('File rename error:', error);
               }
@@ -70,7 +82,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             try {
               fs.renameSync(file.filepath, newPath);
-              uploadedFiles.push(`/uploads/${uniqueFilename}`);
+              // Store as absolute URL instead of relative path
+              uploadedFiles.push(getAbsoluteUrl(`/uploads/${uniqueFilename}`));
             } catch (error) {
               console.error('File rename error:', error);
             }
@@ -83,6 +96,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Wait for the form parsing to complete
     const uploadedFiles = await parseForm();
+    
+    // Log the uploaded files for debugging
+    console.log('Uploaded files:', uploadedFiles);
     
     // Send response after files are processed
     return res.status(200).json({ files: uploadedFiles });

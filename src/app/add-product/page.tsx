@@ -34,18 +34,46 @@ export default function AddProduct() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Find the handleSubmit function and modify it:
 
-    // Use local preview URL or fallback to empty
-    const imageUrl = preview || "";
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  // If we have a file, upload it first
+  let imageUrl = "";
+  
+  if (file) {
+    const formData = new FormData();
+    formData.append("files", file);
+    
+    try {
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!uploadResponse.ok) {
+        throw new Error("Failed to upload image");
+      }
+      
+      const uploadData = await uploadResponse.json();
+      // Get the first uploaded file URL
+      imageUrl = uploadData.files?.[0] || "";
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      alert("❌ Error uploading image. Please try again.");
+      return;
+    }
+  }
 
+  // Now submit the product with the image URL
+  try {
     const response = await fetch("/api/products/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...formData,
-        image: imageUrl,
+        image: imageUrl, // Use the uploaded image URL or empty string
         quantity: +formData.quantity,
         price: +formData.price
       }),
@@ -67,7 +95,11 @@ export default function AddProduct() {
       const err = await response.json();
       alert("❌ Error: " + err.message);
     }
-  };
+  } catch (error) {
+    console.error("Error adding product:", error);
+    alert("❌ Error adding product. Please try again.");
+  }
+};
 
   return (
     <div className="p-4 max-w-md mx-auto">
