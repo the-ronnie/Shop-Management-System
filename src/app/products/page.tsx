@@ -252,12 +252,16 @@ export default function ProductsPage() {
                           src={product.image} 
                           alt={product.name} 
                           className="w-10 h-10 object-cover rounded"
-                        />
+                          onError={(e) => {
+                           // Use default image if loading fails
+                          (e.target as HTMLImageElement).src = '/placeholder-product.png'; 
+                        }}
+                      />
                       ) : (
-                        <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-gray-500">
-                          📦
-                        </div>
-                      )}
+                          <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center text-gray-500">
+                           📦
+                          </div>
+                        )}
                       <div>
                         <div className="font-medium">{product.name}</div>
                         <div className="text-sm text-gray-500 truncate max-w-xs">

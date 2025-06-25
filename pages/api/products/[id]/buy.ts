@@ -18,7 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     product.quantity += Number(quantity);
     await product.save();
     
-    res.status(200).json(product);
+    // Fetch the updated product to ensure all fields are included
+    const updatedProduct = await Product.findById(id);
+    
+    res.status(200).json(updatedProduct);
   } catch (error) {
     console.error("Buy operation failed:", error);
     res.status(500).json({ message: "Failed to update inventory" });
