@@ -56,11 +56,17 @@ export default function BillingPage() {
   // Current selection for adding new item
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
   const [currentQuantity, setCurrentQuantity] = useState(1);
+    const [receiptNumber, setReceiptNumber] = useState<string>("");
+
 
   // Initialize date to today
   useEffect(() => {
+    // Set today's date
     const today = new Date().toISOString().split("T")[0];
     setBillDate(today);
+    
+    // Generate a stable receipt number
+    setReceiptNumber(`RCT-${Date.now().toString().slice(-6)}`);
   }, []);
 
   // Fetch products
@@ -817,8 +823,8 @@ export default function BillingPage() {
             <p><strong>Customer:</strong> {customerName}</p>
           </div>
           <div>
-            <p><strong>Date:</strong> {new Date(billDate).toLocaleDateString()}</p>
-            <p><strong>Receipt #:</strong> {Math.floor(Math.random() * 1000000)}</p>
+            <p><strong>Date:</strong> {billDate ? new Date(billDate).toLocaleDateString() : ''}</p>
+            <p><strong>Receipt #:</strong> {receiptNumber}</p>
           </div>
         </div>
 
