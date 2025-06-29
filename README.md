@@ -152,8 +152,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 For questions or feedback, please reach out to:
 
-- **Email**: your-email@example.com
-- **GitHub**: [Your GitHub Profile](https://github.com/your-username)
+- **Email**: 1234rohanagarwal@gmail.com
+- **GitHub**: [Your GitHub Profile](https://github.com/the-ronnie)
 
 ## Learn More About Next.js
 
@@ -169,3 +169,6 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+ngrok start secure-next-app
